@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated class="gradiente">
       <q-toolbar>
         <q-btn
           flat
@@ -65,6 +65,10 @@
             style="min-width: 100px"
             @update:model-value="(v) => {leftDrawerOpen = false}"
           />
+        </q-item>
+        <!-- <q-item-separator /> -->
+        <q-item >
+          <q-chip color="red">Eliminar un jugador:</q-chip> Fer doble click/tab sobre el nom del jugador
         </q-item>
         <!-- <q-item-separator /> -->
         <q-item >
@@ -355,3 +359,11 @@ export default defineComponent({
   }
 })
 </script>
+
+
+
+<style scoped>
+	.gradiente {
+		background: rgb(0,15,59);
+		background: linear-gradient(90deg, rgba(0,15,59,1) 0%, rgba(85,145,245,1) 100%);	}
+</style>

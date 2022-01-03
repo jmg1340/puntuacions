@@ -2,7 +2,7 @@
   "name": "puntuacions",
   "version": "0.0.1",
   "description": "registre de punts",
-  "productName": "Puntuacionss",
+  "productName": "Puntuacions",
   "author": "jordi <jordi.miserachs@gmail.com>",
   "private": true,
   "scripts": {

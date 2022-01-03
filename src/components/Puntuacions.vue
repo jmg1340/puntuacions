@@ -7,11 +7,19 @@
 		:rows="jugadors"
 		row-key="name"
 		hide-bottom
-		dense
-		class="shadow-5 colorTaula flex"
+		
+		class="shadow-5 colorTaula flex q-ma-xs"
 		separator="cell"
 		v-model:pagination="pagination"	
 		>
+<!-- 
+			<template v-slot:header="props">
+					<q-th key="posicio" :props="props">** POS **</q-th>
+					<q-th key="posicio" :props="props">** NOM **</q-th>
+					<q-th key="posicio" :props="props">** TOTAL **</q-th>
+			</template>
+ -->
+
 
 			<template v-slot:body="props">
 				<q-tr :props="props">
@@ -22,19 +30,19 @@
 						</span>
 					</q-td>
 
-					<q-td key="jugador" :props="props">
-						<q-btn size="sm" round dense color="negative" icon="delete" @click="eliminarJugador(props.row.nom, props.rowIndex)" class="q-mr-md" />
+					<q-td key="jugador" :props="props" @dblclick="eliminarJugador(props.row.nom, props.rowIndex)">
+						<!-- <q-btn size="sm" round dense color="negative" icon="delete" @click="eliminarJugador(props.row.nom, props.rowIndex)" class="q-mr-md" /> -->
 
 						<span :class="{guanyador: props.row.posicio==1}">{{ props.row.nom }}</span>
 					</q-td>
 
 						
-					<q-td key="total" :props="props" class="colTotal">
+					<q-td key="total" :props="props">
 						{{ props.row.total }}
 					</q-td>
 
 
-					<q-td v-for="col in props.cols.filter( (col) => col.name.startsWith('Part') )"  :key="col.name" :props="props">
+					<q-td v-for="col in props.cols.filter( (col) => col.name.startsWith('Part') )"  :key="col.name" :props="props" @dblclick="eliminarPartida(col, props)">
 							
 							{{ col.value }}
 
@@ -77,7 +85,7 @@
 
 
 <script>
-import { ref, toRefs, computed, watch, defineComponent, onMounted } from 'vue';
+import { ref, toRefs, computed, watch, watchEffect, defineComponent, onMounted } from 'vue';
 import { useQuasar } from 'quasar'
 
 export default defineComponent({
@@ -117,6 +125,17 @@ export default defineComponent({
 			{name: "total",   field: "total", label: "Total",   align: "center" , style: "width: 50px"}
 		])
 
+		// Si hi ha dades guardades al localStorage, substituir-les.
+		if ($q.localStorage.getItem('keyPuntuacio')) {
+			console.log("existeixen dades a LOCALSTORAGE")
+			// console.log(JSON.parse($q.localStorage.getItem('keyPuntuacio')))
+			const {campsBkp, jugadorsBkp, ultimaPartidaBkp } = JSON.parse($q.localStorage.getItem('keyPuntuacio')) 
+			// console.log("campsBkp, jugadorsBkp, ultimaPartidaBkp", campsBkp, jugadorsBkp, ultimaPartidaBkp)
+
+			camps.value = campsBkp
+			jugadors.value = jugadorsBkp
+			ultimaPartida.value = ultimaPartidaBkp
+		}
 
 
 		// Creació de nova partida / nova columna
@@ -177,6 +196,12 @@ export default defineComponent({
 			}
 		})
 
+
+		const eliminarPartida = (props) => {
+			// if ( props.rowIndex === 0 ){
+				console.log("props", props)
+			// }
+		}
 
 
 		// Eliminació de partides
@@ -338,29 +363,47 @@ export default defineComponent({
     }
 
 
+/* 
+		// guarda jugadors a localstorage
+		watch( jugadors, (newValueJugadors, oldValueJugadors) => {
+			console.log('WATCH Guarda JUGADORS a LOCALSTORAGE ')
+			
+			$q.localStorage.set('keyPuntuacio', JSON.stringify( {
+				'jugadors': newValueJugadors.value,
+				// 'camps': newValueCamps.value,
+				// 'ultimaPartida': ultimaPartida.value
+			}))
+
+		})
+ */
 
 		// guarda les dades a localstorage
-		watch( [jugadors, camps, ultimaPartida], ([newValueJugadors, newValueCamps, newValueUltimaPartida], [oldValueJugadors, oldValueCamps, oldValueUltimaPartida]) => {
+		// watch( [jugadors, camps], ([newValueJugadors, newValueCamps], [oldValueJugadors, oldValueCamps, oldValueUltimaPartida]) => {
+		watchEffect( () => {
 			console.log('WATCH Guarda dades a LOCALSTORAGE ')
 			
-			$q.localStorage.set('keyPuntuacio', {
-				'jugadors': jugadors.value,
-				'camps': camps.value,
-				'ultimaPartida': ultimaPartida.value
-			})
+			$q.localStorage.set('keyPuntuacio', JSON.stringify( {
+				'campsBkp': jugadors.value,
+				'jugadorsBkp': camps.value,
+				'ultimaPartidaBkp': ultimaPartida.value
+			}))
 
 		})
 
 
 
 		// Carrega les dades si n'hi ha al Localstorage
+/* 		
     onMounted(() => {
       if ($q.localStorage.keyPuntuacio) {
+				const {camps, jugadors, ultimaPartida }=JSON.parse($q.localStorage.get('keyPuntuacio'))
+
 				camps.value = $q.localStorage.getItem(camps)
 				jugadors.value = $q.localStorage.getItem(jugadors)
 				ultimaPartida.value = $q.localStorage.getItem(ultimaPartida)
 			}
     })
+ */
 
 
 		return { 
@@ -369,6 +412,7 @@ export default defineComponent({
 			ultimaPartida,
 			sumatori,
 			eliminarJugador,
+			eliminarPartida,
 
 			pagination: ref({
         rowsPerPage: 0
@@ -377,3 +421,44 @@ export default defineComponent({
 	}
 })
 </script>
+
+
+
+
+<style>
+
+.clInput{
+  width: 75px;
+}
+
+
+
+.q-table thead th {
+    color: white;
+    background-color: rgb(78, 78, 78);
+    /*white-space: normal;*/
+    font-size: 15px;
+}
+
+.q-table tbody td{
+  font-size: 16px;
+}
+
+/* estil de la columna TOTAL */
+td:nth-child(3) {
+	background-color: #f5f5dc;
+	font-weight: bold;
+}
+
+/* estil de la columna partdides fetes, no l'actual */
+td:nth-child(n+5) {
+	color: rgb(139, 139, 139);
+}
+
+.guanyador {
+  color: rgb(255, 85, 85);
+  font-size: 20px;
+  font-weight: bold;
+}
+
+</style>
