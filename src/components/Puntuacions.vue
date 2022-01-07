@@ -85,7 +85,7 @@
 
 
 <script>
-import { ref, toRefs, computed, watch, watchEffect, defineComponent, onMounted } from 'vue';
+import { ref, toRefs, computed, watch, watchEffect, defineComponent, onRenderTracked, onUpdated } from 'vue';
 import { useQuasar } from 'quasar'
 
 export default defineComponent({
@@ -111,10 +111,10 @@ export default defineComponent({
 
 
 		let jugadors = ref([
-			{nom: "AA",  total: 0, posicio: null },
-			{nom: "BBB", total: 0, posicio: null },
-			{nom: "CCC", total: 0, posicio: null },
-			{nom: "DDD", total: 0, posicio: null },
+			// {nom: "AA",  total: 0, posicio: null },
+			// {nom: "BBB", total: 0, posicio: null },
+			// {nom: "CCC", total: 0, posicio: null },
+			// {nom: "DDD", total: 0, posicio: null },
 		])
 
 		let ultimaPartida =  ref(0)
@@ -125,17 +125,19 @@ export default defineComponent({
 			{name: "total",   field: "total", label: "Total",   align: "center" , style: "width: 50px"}
 		])
 
+
 		// Si hi ha dades guardades al localStorage, substituir-les.
+
 		if ($q.localStorage.getItem('keyPuntuacio')) {
 			console.log("existeixen dades a LOCALSTORAGE")
-			// console.log(JSON.parse($q.localStorage.getItem('keyPuntuacio')))
 			const {campsBkp, jugadorsBkp, ultimaPartidaBkp } = JSON.parse($q.localStorage.getItem('keyPuntuacio')) 
-			// console.log("campsBkp, jugadorsBkp, ultimaPartidaBkp", campsBkp, jugadorsBkp, ultimaPartidaBkp)
 
 			camps.value = campsBkp
 			jugadors.value = jugadorsBkp
 			ultimaPartida.value = ultimaPartidaBkp
 		}
+
+
 
 
 		// Creació de nova partida / nova columna
@@ -265,8 +267,10 @@ export default defineComponent({
       // fem recorregut per totes les propitats
       for (var propietat in objFila){
         // suma totes les propietats que comencin per P i que el seu valor no sigui null
-        if (propietat.startsWith("P") && (objFila[propietat] != null)){
-         suma += parseInt(objFila[propietat]);
+				
+        if (propietat.startsWith("P") && (objFila[propietat] != null) && (objFila[propietat] != '')){
+         console.log( "Valor cel·la: ", objFila[propietat])
+				 suma += parseInt(objFila[propietat]);
         }
       }
 
@@ -383,8 +387,8 @@ export default defineComponent({
 			console.log('WATCH Guarda dades a LOCALSTORAGE ')
 			
 			$q.localStorage.set('keyPuntuacio', JSON.stringify( {
-				'campsBkp': jugadors.value,
-				'jugadorsBkp': camps.value,
+				'campsBkp': camps.value,
+				'jugadorsBkp': jugadors.value,
 				'ultimaPartidaBkp': ultimaPartida.value
 			}))
 

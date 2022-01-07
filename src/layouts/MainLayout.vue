@@ -68,7 +68,7 @@
         </q-item>
         <!-- <q-item-separator /> -->
         <q-item >
-          <q-chip color="red">Eliminar un jugador:</q-chip> Fer doble click/tab sobre el nom del jugador
+          <q-chip color="red">Eliminar un jugador:</q-chip> Fer doble click/tap sobre el nom del jugador
         </q-item>
         <!-- <q-item-separator /> -->
         <q-item >
