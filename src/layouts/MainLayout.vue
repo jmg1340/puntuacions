@@ -66,17 +66,40 @@
             @update:model-value="(v) => {leftDrawerOpen = false}"
           />
         </q-item>
+
         <!-- <q-item-separator /> -->
         <q-item >
-          <q-chip color="red">Eliminar un jugador:</q-chip> Fer doble click/tap sobre el nom del jugador
+					<q-item-section>
+						<q-item-label class="text-weight-bolder" color="red">
+							Eliminar un jugador:
+						</q-item-label>
+						<q-item-label>
+							Fer doble click/tap sobre el nom del jugador
+						</q-item-label>
+					</q-item-section>
         </q-item>
+
         <!-- <q-item-separator /> -->
         <q-item >
           <q-btn color="negative" noCaps icon="delete" label="Eliminar partides" @click="eliminarPartides" />
         </q-item>
+
         <!-- <q-item-separator /> -->
         <q-item >
-          <q-btn color="negative" noCaps icon="delete" label="Eliminar Jugadors i partides" @click="eliminarJugadorsiPartides" />
+          <q-btn color="negative" noCaps icon="delete" label="Eliminar jugadors i partides" @click="eliminarJugadorsiPartides" />
+        </q-item>
+
+        <q-item >
+					<q-item-section>
+						 <q-item-label>
+						 		Quan en el teclat numèric no hi ha el signe menys "-", clica aquest boto per copiar-lo. Llavors, quan posis puntuació negativa, primer fes un "enganxar" / "pegar" i després el escriu el número							 
+						 </q-item-label>
+						 <q-item-label>
+								<q-btn color="grey-9" noCaps icon-right="remove" label="Copiar" outline  @click="copiarSigneMenys" />							 
+						 </q-item-label>
+
+					</q-item-section>
+
         </q-item>
         <!-- <q-item-separator /> -->
 
@@ -196,7 +219,7 @@ import pagPunts from 'components/Puntuacions.vue'
 // ];
 
 import { defineComponent, ref, reactive } from 'vue'
-import { useQuasar } from 'quasar'
+import { useQuasar, copyToClipboard } from 'quasar'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -316,7 +339,23 @@ export default defineComponent({
 
 
 
-
+		const copiarSigneMenys = () => {
+			copyToClipboard('-')
+			.then(() => {
+				leftDrawerOpen.value = false;
+        $q.notify({
+					message: "Signe menys '-' COPIAT !!",
+					timeout: 2000,
+					color: "green"
+				})
+			}).catch(() => {
+        $q.notify({
+					message: "NO S'HA COPIAT el igne menys '-'",
+					timeout: 2000,
+					color: "red"
+				})
+			})
+		}
 
 
 
@@ -354,7 +393,7 @@ export default defineComponent({
 			propEliminarJugadorsiPartides,
 			eliminarJugadorsiPartides,
 
-
+			copiarSigneMenys
     }
   }
 })
