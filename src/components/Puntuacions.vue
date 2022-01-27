@@ -120,7 +120,7 @@ export default defineComponent({
 		let ultimaPartida =  ref(0)
 
 		let camps = ref([
-			{name: "posicio",   field: "posicio", label: "Pos",   align: "center" , style: "width: 15px"},
+			{name: "posicio",   field: "posicio", label: "Pos",   align: "center" , style: "width: 15px", sortable: true},
 			{name: 'jugador', field: 'nom',   label: 'Jugador', align: 'left', style: "width: 200px;"},
 			{name: "total",   field: "total", label: "Total",   align: "center" , style: "width: 50px"}
 		])

@@ -47,6 +47,7 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
+			class="bg-grey-2"
     >
 
       <q-list
